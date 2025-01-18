@@ -113,13 +113,7 @@ function App() {
   }
 
   const handleTempImageChange = (e) => {
-    console.log(e.target.value)
     setTempImage(e.target.value)
-    /*     const { value } = e.target;
-        const newImages = [...tempProduct.imagesUrl];
-        newImages[index] = value;
-    
-        console.log("handleTempImageChange", newImages) */
   }
 
   const handleModalInputChange = (e) => {
@@ -145,12 +139,30 @@ function App() {
 
   const handleDeleteImage = () => {
     let newImages = [...tempProduct.imagesUrl];
-    newImages = newImages.slice(0, -1)
+    newImages = newImages.filter(image => image != "").slice(0, -1)
 
     setTempProduct({
       ...tempProduct,
       imagesUrl: newImages
     })
+  }
+
+  const createProduct = (product) => {
+    console.log("createProduct")
+
+  }
+
+  const updateProduct = async (product) => {
+    console.log("updateProduct")
+    const updateProduct = {
+      ...product,
+      origin_price: Number(product.origin_price),
+      price: Number(product.price)
+    }
+    const resUpdate = await axios.put(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${product.id}`, {
+      data: updateProduct
+    })
+    getProducts();
   }
 
   return (
@@ -300,7 +312,7 @@ function App() {
                         )
                       }
                       {
-                        tempProduct?.imagesUrl[1] && tempProduct?.imagesUrl.filter(image => image != "").length == 5 && (<button type="button" onClick={handleDeleteImage} className="btn btn-outline-danger btn-sm d-block w-100">
+                        tempProduct?.imagesUrl[1] && tempProduct?.imagesUrl.filter(image => image != "").length > 1 && (<button type="button" onClick={handleDeleteImage} className="btn btn-outline-danger btn-sm d-block w-100">
                           刪除圖片
                         </button>)
                       }
@@ -436,7 +448,7 @@ function App() {
               <button type="button" onClick={handleCloseProductModal} className="btn btn-secondary">
                 取消
               </button>
-              <button type="button" className="btn btn-primary">
+              <button type="button" onClick={() => modalMode === "create" ? createProduct(tempProduct) : updateProduct(tempProduct)} className="btn btn-primary">
                 確認
               </button>
             </div>
