@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Modal } from 'bootstrap';
+import SweetAlert2 from 'react-sweetalert2';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -20,7 +21,6 @@ const defaultModalState = {
 function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [products, setProducts] = useState([]);
-  /* const [tempProduct, setTempProduct] = useState({}); */
 
   const [account, setAccount] = useState({
     username: "example@test.com",
@@ -28,7 +28,7 @@ function App() {
   });
 
   const handleInputChange = (e) => {
-    const { value, name } = e.target
+    const { value, name } = e.target;
     setAccount({
       ...account,
       [name]: value
@@ -38,13 +38,13 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const resLogin = await axios.post(`${BASE_URL}/v2/admin/signin`, account)
-      const { token, expired } = resLogin.data
+      const resLogin = await axios.post(`${BASE_URL}/v2/admin/signin`, account);
+      const { token, expired } = resLogin.data;
 
       document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
       axios.defaults.headers.common['Authorization'] = token;
       getProducts();
-      setIsAuth(true)
+      setIsAuth(true);
 
     } catch (error) {
       alert("登入失敗: ", error);
@@ -54,9 +54,9 @@ function App() {
   const getProducts = async () => {
     try {
       const resProduct = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/admin/products`);
-      setProducts(resProduct.data.products)
+      setProducts(resProduct.data.products);
     } catch (error) {
-      console.log("取得資料失敗: ", error)
+      alert("取得資料失敗");
     }
   };
 
@@ -66,9 +66,9 @@ function App() {
       getProducts();
       setIsAuth(true);
     } catch (error) {
-      alert("使用者未登入");
+      //alert("使用者未登入");
+      console.log("使用者未登入")
     }
-
   };
 
   const [modalMode, setModalMode] = useState(null);
@@ -90,7 +90,7 @@ function App() {
     new Modal(productModalRef.current, {
       backdrop: false
     });
-  }, [])
+  }, []);
 
   useEffect(() => {
     const token = document.cookie.replace(
@@ -112,11 +112,11 @@ function App() {
       ...tempProduct,
       imagesUrl: newImages.filter(image => image != "")
     })
-  }
+  };
 
   const handleTempImageChange = (e) => {
-    setTempImage(e.target.value)
-  }
+    setTempImage(e.target.value);
+  };
 
   const handleModalInputChange = (e) => {
     const { value, name, checked, type } = e.target;
@@ -124,7 +124,7 @@ function App() {
       ...tempProduct,
       [name]: type === "checkbox" ? checked : value
     })
-  }
+  };
 
   const handleAddImage = () => {
     const newImages = [...tempProduct.imagesUrl];
@@ -134,18 +134,18 @@ function App() {
       ...tempProduct,
       imagesUrl: newImages
     })
-    setTempImage("")
-  }
+    setTempImage("");
+  };
 
   const handleDeleteImage = () => {
     let newImages = [...tempProduct.imagesUrl];
-    newImages = newImages.filter(image => image != "").slice(0, -1)
+    newImages = newImages.filter(image => image != "").slice(0, -1);
 
     setTempProduct({
       ...tempProduct,
       imagesUrl: newImages
     })
-  }
+  };
 
   const createProduct = async () => {
     const createProduct = {
@@ -153,7 +153,8 @@ function App() {
       origin_price: Number(tempProduct.origin_price),
       price: Number(tempProduct.price),
       is_enabled: tempProduct.is_enabled ? 1 : 0
-    }
+    };
+
     try {
       const resCreate = await axios.post(`${BASE_URL}/v2/api/${API_PATH}/admin/product`, {
         data: createProduct
@@ -161,9 +162,10 @@ function App() {
       getProducts();
       handleCloseProductModal();
     } catch (error) {
-      console.log("新增失敗", error)
+      alert("新增失敗");
+      handleCloseProductModal();
     }
-  }
+  };
 
   const updateProduct = async () => {
     const updateProduct = {
@@ -171,27 +173,28 @@ function App() {
       origin_price: Number(tempProduct.origin_price),
       price: Number(tempProduct.price),
       is_enabled: tempProduct.is_enabled ? 1 : 0
-    }
+    };
 
     try {
       const resUpdate = await axios.put(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${tempProduct.id}`, {
         data: updateProduct
-      })
+      });
       getProducts();
       handleCloseProductModal();
     } catch (error) {
-      console.log("更新失敗: ", error)
+      alert("更新失敗");
+      handleCloseProductModal();
     }
-  }
+  };
 
   const deleteProduct = async (id) => {
     try {
       const delRes = await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${id}`);
       getProducts();
     } catch (error) {
-      console.log("刪除失敗: ", error)
+      alert("刪除失敗");
     }
-  }
+  };
 
   return (
     <>
