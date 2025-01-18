@@ -54,7 +54,6 @@ function App() {
   const getProducts = async () => {
     const resProduct = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/products/all`);
 
-    //console.log("resProduct", resProduct)
     setProducts(resProduct.data.products)
   };
 
@@ -125,10 +124,8 @@ function App() {
   }
 
   const handleAddImage = () => {
-    console.log("handleAddImage")
     const newImages = [...tempProduct.imagesUrl];
     newImages[newImages.filter(image => image != "").length] = tempImage;
-    console.log("newImages: ", newImages)
 
     setTempProduct({
       ...tempProduct,
@@ -147,13 +144,20 @@ function App() {
     })
   }
 
-  const createProduct = (product) => {
-    console.log("createProduct")
-
+  const createProduct = async (product) => {
+    const createProduct = {
+      ...product,
+      origin_price: Number(product.origin_price),
+      price: Number(product.price)
+    }
+    const resCreate = await axios.post(`${BASE_URL}/v2/api/${API_PATH}/admin/product`, {
+      data: createProduct
+    })
+    getProducts();
+    handleCloseProductModal();
   }
 
   const updateProduct = async (product) => {
-    console.log("updateProduct")
     const updateProduct = {
       ...product,
       origin_price: Number(product.origin_price),
@@ -163,6 +167,7 @@ function App() {
       data: updateProduct
     })
     getProducts();
+    handleCloseProductModal();
   }
 
   return (
