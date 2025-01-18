@@ -107,7 +107,7 @@ function App() {
 
     setTempProduct({
       ...tempProduct,
-      imagesUrl: newImages
+      imagesUrl: newImages.filter(image => image != "")
     })
   }
 
@@ -126,8 +126,6 @@ function App() {
 
   const handleDeleteImage = async (index) => {
     console.log("handleDeleteImage", index);
-    const resDelProduct = await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${index}`);
-    console.log("resDelProduct", resDelProduct.response.data);
   }
 
   return (
@@ -239,23 +237,25 @@ function App() {
                               className="img-fluid mb-2"
                             />
                           )}
-                          {<div className='d-flex'>
-                            {
-                              index < 4 && !tempProduct?.imagesUrl[index + 1] && (
-                                <button type="button" onClick={() => handleAddImage(index)} className="btn btn-outline-primary btn-sm d-block w-100">
-                                  新增圖片
-                                </button>
-                              )}
-                            {!tempProduct?.imagesUrl[index + 1] && (
-                              <button type="button" onClick={() => handleDeleteImage(index)} className="btn btn-outline-danger btn-sm d-block w-100">
-                                刪除圖片
-                              </button>
-                            )
-                            }
-                          </div>}
                         </div>)
                     ))
                     }
+                    <div className='d-flex'>
+                      {
+                        tempProduct?.imagesUrl.filter(image => image != "").length < 5 && (
+                          <button type="button" className="btn btn-outline-primary btn-sm d-block w-100">
+                            新增圖片
+                          </button>
+                        )
+                      }
+
+                      {
+                        tempProduct?.imagesUrl[1] && (<button type="button" className="btn btn-outline-danger btn-sm d-block w-100">
+                          刪除圖片
+                        </button>)
+                      }
+                    </div>
+
                   </div>
                 </div>
 
