@@ -170,6 +170,11 @@ function App() {
     handleCloseProductModal();
   }
 
+  const deleteProduct = async (id) => {
+    const delRes = await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${id}`);
+    getProducts();
+  }
+
   return (
     <>
       {isAuth ? (<div className="container">
@@ -195,7 +200,7 @@ function App() {
                   <td>{product.origin_price}</td>
                   <td>{product.price}</td>
                   <td>{product.is_enabled ? '啟用' : '未啟用'}</td>
-                  <td><button type="button" onClick={() => handleOpenProductModal('edit', product)} className="btn btn-outline-primary me-2">編輯</button><button type="button" className="btn btn-outline-danger">刪除</button></td>
+                  <td><button type="button" onClick={() => handleOpenProductModal('edit', product)} className="btn btn-outline-primary me-2">編輯</button><button type="button" onClick={() => deleteProduct(product.id)} className="btn btn-outline-danger">刪除</button></td>
                 </tr>
               )
             })}
