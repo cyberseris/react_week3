@@ -47,14 +47,17 @@ function App() {
       setIsAuth(true)
 
     } catch (error) {
-      alert("登入失敗");
+      alert("登入失敗: ", error);
     }
   };
 
   const getProducts = async () => {
-    const resProduct = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/products/all`);
-
-    setProducts(resProduct.data.products)
+    try {
+      const resProduct = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/admin/products`);
+      setProducts(resProduct.data.products)
+    } catch (error) {
+      console.log("取得資料失敗: ", error)
+    }
   };
 
   const checkUserLogin = async () => {
@@ -144,35 +147,50 @@ function App() {
     })
   }
 
-  const createProduct = async (product) => {
+  const createProduct = async () => {
     const createProduct = {
-      ...product,
-      origin_price: Number(product.origin_price),
-      price: Number(product.price)
+      ...tempProduct,
+      origin_price: Number(tempProduct.origin_price),
+      price: Number(tempProduct.price),
+      is_enabled: tempProduct.is_enabled ? 1 : 0
     }
-    const resCreate = await axios.post(`${BASE_URL}/v2/api/${API_PATH}/admin/product`, {
-      data: createProduct
-    })
-    getProducts();
-    handleCloseProductModal();
+    try {
+      const resCreate = await axios.post(`${BASE_URL}/v2/api/${API_PATH}/admin/product`, {
+        data: createProduct
+      })
+      getProducts();
+      handleCloseProductModal();
+    } catch (error) {
+      console.log("新增失敗", error)
+    }
   }
 
-  const updateProduct = async (product) => {
+  const updateProduct = async () => {
     const updateProduct = {
-      ...product,
-      origin_price: Number(product.origin_price),
-      price: Number(product.price)
+      ...tempProduct,
+      origin_price: Number(tempProduct.origin_price),
+      price: Number(tempProduct.price),
+      is_enabled: tempProduct.is_enabled ? 1 : 0
     }
-    const resUpdate = await axios.put(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${product.id}`, {
-      data: updateProduct
-    })
-    getProducts();
-    handleCloseProductModal();
+
+    try {
+      const resUpdate = await axios.put(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${tempProduct.id}`, {
+        data: updateProduct
+      })
+      getProducts();
+      handleCloseProductModal();
+    } catch (error) {
+      console.log("更新失敗: ", error)
+    }
   }
 
   const deleteProduct = async (id) => {
-    const delRes = await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${id}`);
-    getProducts();
+    try {
+      const delRes = await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${id}`);
+      getProducts();
+    } catch (error) {
+      console.log("刪除失敗: ", error)
+    }
   }
 
   return (
@@ -193,13 +211,13 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => {
+            {products?.map((product) => {
               return (
                 <tr key={product.id}>
                   <td>{product.title}</td>
                   <td>{product.origin_price}</td>
                   <td>{product.price}</td>
-                  <td>{product.is_enabled ? '啟用' : '未啟用'}</td>
+                  <td>{product.is_enabled ? (<span className="text-success">啟用</span>) : (<span>未啟用</span>)}</td>
                   <td><button type="button" onClick={() => handleOpenProductModal('edit', product)} className="btn btn-outline-primary me-2">編輯</button><button type="button" onClick={() => deleteProduct(product.id)} className="btn btn-outline-danger">刪除</button></td>
                 </tr>
               )
@@ -458,7 +476,7 @@ function App() {
               <button type="button" onClick={handleCloseProductModal} className="btn btn-secondary">
                 取消
               </button>
-              <button type="button" onClick={() => modalMode === "create" ? createProduct(tempProduct) : updateProduct(tempProduct)} className="btn btn-primary">
+              <button type="button" onClick={() => modalMode === "create" ? createProduct() : updateProduct()} className="btn btn-primary">
                 確認
               </button>
             </div>
