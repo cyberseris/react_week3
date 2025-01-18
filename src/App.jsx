@@ -64,8 +64,7 @@ function App() {
       getProducts();
       setIsAuth(true);
     } catch (error) {
-      console.log(error)
-      //alert("使用者未登入");
+      alert("使用者未登入");
     }
 
   };
@@ -240,51 +239,20 @@ function App() {
                               className="img-fluid mb-2"
                             />
                           )}
-                          {
-                            <div>
-                              {
-                                !tempProduct?.imagesUrl[index + 1] && index < 4 && (
-                                  <div>
-                                    <label
-                                      htmlFor={`imagesUrl-${index + 2}`}
-                                      className="form-label"
-                                    >
-                                      副圖 {index + 2}
-                                    </label>
-                                    <input
-                                      value=""
-                                      onChange={(e) => handleImageChange(e, index)}
-                                      id={`imagesUrl-${index + 2}`}
-                                      type="text"
-                                      placeholder={`圖片網址 ${index + 2}`}
-                                      className="form-control mb-2"
-                                    />
-                                  </div>
-                                )
-                              }
-                              {!image && index < 4 && image && (
-                                <img
-                                  src=""
-                                  alt={`副圖 ${index + 2}`}
-                                  className="img-fluid mb-2"
-                                />
-                              )}
-                            </div>
-                          }{
-                            <div className='d-flex'>
-                              {
-                                index < 4 && !tempProduct?.imagesUrl[index + 1] && (
-                                  <button type="button" onClick={() => handleAddImage(index)} className="btn btn-outline-primary btn-sm d-block w-100 me-2">
-                                    新增圖片
-                                  </button>
-                                )}
-                              {!tempProduct?.imagesUrl[index + 1] && (
-                                <button type="button" onClick={() => handleDeleteImage(index)} className="btn btn-outline-danger btn-sm d-block w-100">
-                                  刪除圖片
+                          {<div className='d-flex'>
+                            {
+                              index < 4 && !tempProduct?.imagesUrl[index + 1] && (
+                                <button type="button" onClick={() => handleAddImage(index)} className="btn btn-outline-primary btn-sm d-block w-100">
+                                  新增圖片
                                 </button>
-                              )
-                              }
-                            </div>}
+                              )}
+                            {!tempProduct?.imagesUrl[index + 1] && (
+                              <button type="button" onClick={() => handleDeleteImage(index)} className="btn btn-outline-danger btn-sm d-block w-100">
+                                刪除圖片
+                              </button>
+                            )
+                            }
+                          </div>}
                         </div>)
                     ))
                     }
