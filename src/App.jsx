@@ -100,6 +100,7 @@ function App() {
   }, []);
 
   const [tempProduct, setTempProduct] = useState(defaultModalState);
+  const [tempImage, setTempImage] = useState("");
   const handleImageChange = (e, index) => {
     const { value } = e.target;
     const newImages = [...tempProduct.imagesUrl];
@@ -109,6 +110,16 @@ function App() {
       ...tempProduct,
       imagesUrl: newImages.filter(image => image != "")
     })
+  }
+
+  const handleTempImageChange = (e) => {
+    console.log(e.target.value)
+    setTempImage(e.target.value)
+    /*     const { value } = e.target;
+        const newImages = [...tempProduct.imagesUrl];
+        newImages[index] = value;
+    
+        console.log("handleTempImageChange", newImages) */
   }
 
   const handleModalInputChange = (e) => {
@@ -121,7 +132,15 @@ function App() {
 
   const handleAddImage = () => {
     console.log("handleAddImage")
-    console.log("tempProduct", tempProduct.imagesUrl.filter(image => image != ""))
+    const newImages = [...tempProduct.imagesUrl];
+    newImages[newImages.filter(image => image != "").length] = tempImage;
+    console.log("newImages: ", newImages)
+
+    setTempProduct({
+      ...tempProduct,
+      imagesUrl: newImages
+    })
+    setTempImage("")
   }
 
   const handleDeleteImage = async (index) => {
@@ -240,22 +259,46 @@ function App() {
                         </div>)
                     ))
                     }
+
+                    {
+                      tempProduct?.imagesUrl.filter(image => image != "").length < 5 && (
+                        <div className='d-flex flex-column'>
+                          <label
+                            htmlFor={`imagesUrl-${tempProduct?.imagesUrl.filter(image => image != "").length + 1}`}
+                            className="form-label"
+                          >
+                            副圖 {tempProduct?.imagesUrl.filter(image => image != "").length + 1}
+                          </label>
+                          <input
+                            value={tempImage}
+                            onChange={(e) => handleTempImageChange(e)}
+                            id={`imagesUrl-${tempProduct?.imagesUrl.filter(image => image != "").length + 1}`}
+                            type="text"
+                            placeholder={`圖片網址 ${tempProduct?.imagesUrl.filter(image => image != "").length + 1}`}
+                            className="form-control mb-2"
+                          />
+                          <img
+                            src={tempImage}
+                            alt={`副圖 ${tempProduct?.imagesUrl.filter(image => image != "").length + 1}`}
+                            className="img-fluid mb-2"
+                          />
+                        </div>
+                      )
+                    }
                     <div className='d-flex'>
                       {
                         tempProduct?.imagesUrl.filter(image => image != "").length < 5 && (
-                          <button type="button" className="btn btn-outline-primary btn-sm d-block w-100">
+                          <button type="button" onClick={handleAddImage} className="btn btn-outline-primary btn-sm d-block w-100 me-2">
                             新增圖片
                           </button>
                         )
                       }
-
                       {
-                        tempProduct?.imagesUrl[1] && (<button type="button" className="btn btn-outline-danger btn-sm d-block w-100">
+                        tempProduct?.imagesUrl[1] && tempProduct?.imagesUrl.filter(image => image != "").length == 5 && (<button type="button" className="btn btn-outline-danger btn-sm d-block w-100">
                           刪除圖片
                         </button>)
                       }
                     </div>
-
                   </div>
                 </div>
 
@@ -393,7 +436,7 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   )
 }
