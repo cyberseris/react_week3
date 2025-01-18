@@ -119,6 +119,11 @@ function App() {
     })
   }
 
+  const handleDeleteImage = async (index) => {
+    console.log("handleDeleteImage", index);
+    const resDelProduct = await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/admin/product/${index}`);
+    console.log("resDelProduct", resDelProduct.response.data);
+  }
 
   return (
     <>
@@ -206,33 +211,7 @@ function App() {
                   {/* 副圖 */}
                   <div className="border border-2 border-dashed rounded-3 p-3">
                     {tempProduct?.imagesUrl?.map((image, index) => (
-                      <div key={index} className="mb-2" >
-                        <label
-                          htmlFor={`imagesUrl-${index + 1}`}
-                          className="form-label"
-                        >
-                          副圖 {index + 1}
-                        </label>
-                        <input
-                          value={image}
-                          onChange={(e) => handleImageChange(e, index)}
-                          id={`imagesUrl-${index + 1}`}
-                          type="text"
-                          placeholder={`圖片網址 ${index + 1}`}
-                          className="form-control mb-2"
-                        />
-                        {image && (
-                          <img
-                            src={image}
-                            alt={`副圖 ${index + 1}`}
-                            className="img-fluid mb-2"
-                          />
-                        )}
-                      </div>
-                    ))}
-
-                    {/* {tempProduct?.imagesUrl?.map((image, index) => (
-                      image !== '' && (
+                      image && (
                         <div key={index} className="mb-2" >
                           <label
                             htmlFor={`imagesUrl-${index + 1}`}
@@ -255,20 +234,20 @@ function App() {
                               className="img-fluid mb-2"
                             />
                           )}
-                        </div>
-                      )
-                    ))} */}
+                          {index < 4 && !tempProduct?.imagesUrl[index + 1] && (
+                            <button type="button" onClick={() => handleDeleteImage(index)} className="btn btn-outline-primary btn-sm d-block w-100">
+                              新增圖片
+                            </button>
+                          )}
+                          {!tempProduct?.imagesUrl[index + 1] && (
+                            <button type="button" onClick={() => handleDeleteImage(index)} className="btn btn-outline-danger btn-sm d-block w-100">
+                              刪除圖片
+                            </button>
+                          )}
 
-                    <div>
-                      {console.log(tempProduct.imagesUrl.length)}
-                      {/*                {tempProduct.imagesUrl.length < 5 && tempProduct.imagesUrl[tempProduct.imagesUrl.length - 1] !== '' && (<button className="btn btn-outline-primary btn-sm d-block w-100">
-                        新增圖片
-                      </button>)} */}
-
-                      <button className="btn btn-outline-danger btn-sm d-block w-100">
-                        刪除圖片
-                      </button>
-                    </div>
+                        </div>)
+                    ))
+                    }
                   </div>
                 </div>
 
@@ -407,8 +386,6 @@ function App() {
           </div>
         </div>
       </div>
-
-
     </>
   )
 }
