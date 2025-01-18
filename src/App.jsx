@@ -143,8 +143,14 @@ function App() {
     setTempImage("")
   }
 
-  const handleDeleteImage = async (index) => {
-    console.log("handleDeleteImage", index);
+  const handleDeleteImage = () => {
+    let newImages = [...tempProduct.imagesUrl];
+    newImages = newImages.slice(0, -1)
+
+    setTempProduct({
+      ...tempProduct,
+      imagesUrl: newImages
+    })
   }
 
   return (
@@ -294,7 +300,7 @@ function App() {
                         )
                       }
                       {
-                        tempProduct?.imagesUrl[1] && tempProduct?.imagesUrl.filter(image => image != "").length == 5 && (<button type="button" className="btn btn-outline-danger btn-sm d-block w-100">
+                        tempProduct?.imagesUrl[1] && tempProduct?.imagesUrl.filter(image => image != "").length == 5 && (<button type="button" onClick={handleDeleteImage} className="btn btn-outline-danger btn-sm d-block w-100">
                           刪除圖片
                         </button>)
                       }
